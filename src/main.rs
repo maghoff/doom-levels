@@ -9,6 +9,10 @@ struct Opt {
     /// Input WAD file
     #[structopt(parse(from_os_str))]
     input: PathBuf,
+
+    /// Which map to read from the WAD file, eg E1M1 for DOOM 1 or MAP01 for
+    /// DOOM 2
+    map: String,
 }
 
 #[derive(Debug)]
@@ -127,9 +131,11 @@ fn calculate_bounding_box<'a>(vertexes: impl IntoIterator<Item = &'a Vertex>) ->
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let opt = Opt::from_args();
 
-    let wad = wad::load_wad_file(opt.input)?;
+    let wad = wad::load_wad_file(&opt.input)?;
 
-    let map = wad.index_of(b"E1M1").ok_or("Cannot find E1M1")?;
+    let map =
+        wad::EntryId::from_str(&opt.map).ok_or_else(|| format!("Invalid lump ID {:?}", opt.map))?;
+    let map = wad.index_of(map).ok_or("Cannot find E1M1")?;
     let map = wad.slice(map + 1..);
 
     let vertexes = map.by_id(b"VERTEXES").ok_or("Cannot find VERTEXES")?;

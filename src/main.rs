@@ -5,7 +5,7 @@ use byteorder::{LittleEndian, ReadBytesExt};
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
-#[structopt(name = "wad-ls", about = "List the lumps in a WAD file")]
+#[structopt(name = "wad-map", about = "Do stuff with map data in WAD files")]
 struct Opt {
     /// Input WAD file
     #[structopt(parse(from_os_str))]
@@ -102,8 +102,8 @@ impl BoundingBox {
     }
 }
 
-fn calculate_bounding_box<'a>(vertexes: impl IntoIterator<Item=&'a Vertex>) -> BoundingBox {
-    use std::cmp::{min, max};
+fn calculate_bounding_box<'a>(vertexes: impl IntoIterator<Item = &'a Vertex>) -> BoundingBox {
+    use std::cmp::{max, min};
 
     let mut vertexes = vertexes.into_iter();
 
@@ -130,20 +130,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let wad = wad::load_wad_file(opt.input)?;
 
-    let e1m1 = wad.iter()
+    let e1m1 = wad
+        .iter()
         .enumerate()
         .find(|(_, (name, _))| *name == "E1M1")
         .ok_or("Cannot find E1M1")?
         .0;
 
-    let vertexes = wad.iter()
+    let vertexes = wad
+        .iter()
         .skip(e1m1)
         .find(|(name, _)| *name == "VERTEXES")
         .ok_or("Cannot find VERTEXES")?
         .1;
     let vertexes = parse_vertexes(&mut vertexes.clone())?;
 
-    let linedefs = wad.iter()
+    let linedefs = wad
+        .iter()
         .skip(e1m1)
         .find(|(name, _)| *name == "LINEDEFS")
         .ok_or("Cannot find LINEDEFS")?
@@ -156,23 +159,27 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let stdout = std::io::stdout();
     let mut out = stdout.lock();
 
-    writeln!(out, r#"<svg viewBox="{} {} {} {}" xmlns="http://www.w3.org/2000/svg">"#,
-        bbox.left, -bbox.bottom, bbox.width(), bbox.height()
+    writeln!(
+        out,
+        r#"<svg viewBox="{} {} {} {}" xmlns="http://www.w3.org/2000/svg">"#,
+        bbox.left,
+        -bbox.bottom,
+        bbox.width(),
+        bbox.height()
     )?;
     writeln!(out, "<style>{}</style>", include_str!("svg.css"))?;
     for linedef in &linedefs {
         let a = &vertexes[linedef.a as usize];
         let b = &vertexes[linedef.b as usize];
 
-        let portal =
-            linedef.left_sidedef.is_some() &&
-            linedef.right_sidedef.is_some();
+        let portal = linedef.left_sidedef.is_some() && linedef.right_sidedef.is_some();
 
         let class = if portal { r#" class="portal""# } else { "" };
 
-        writeln!(out, r#"<line x1="{}" y1="{}" x2="{}" y2="{}"{} />"#,
-            a.x, -a.y, b.x, -b.y,
-            class
+        writeln!(
+            out,
+            r#"<line x1="{}" y1="{}" x2="{}" y2="{}"{} />"#,
+            a.x, -a.y, b.x, -b.y, class
         )?;
     }
     writeln!(out, r#"</svg>"#)?;

@@ -1,7 +1,6 @@
+use byteorder::{LittleEndian, ReadBytesExt};
 use std::io::{Read, Write};
 use std::path::PathBuf;
-
-use byteorder::{LittleEndian, ReadBytesExt};
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
@@ -130,27 +129,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let wad = wad::load_wad_file(opt.input)?;
 
-    let e1m1 = wad
-        .iter()
-        .enumerate()
-        .find(|(_, (name, _))| *name == "E1M1")
-        .ok_or("Cannot find E1M1")?
-        .0;
+    let map = wad.index_of(b"E1M1").ok_or("Cannot find E1M1")?;
+    let map = wad.slice(map + 1..);
 
-    let vertexes = wad
-        .iter()
-        .skip(e1m1)
-        .find(|(name, _)| *name == "VERTEXES")
-        .ok_or("Cannot find VERTEXES")?
-        .1;
+    let vertexes = map.by_id(b"VERTEXES").ok_or("Cannot find VERTEXES")?;
     let vertexes = parse_vertexes(&mut vertexes.clone())?;
 
-    let linedefs = wad
-        .iter()
-        .skip(e1m1)
-        .find(|(name, _)| *name == "LINEDEFS")
-        .ok_or("Cannot find LINEDEFS")?
-        .1;
+    let linedefs = map.by_id(b"LINEDEFS").ok_or("Cannot find LINEDEFS")?;
     let linedefs = parse_linedefs(&mut linedefs.clone())?;
 
     let mut bbox = calculate_bounding_box(&vertexes);

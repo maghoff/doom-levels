@@ -5,6 +5,6 @@ authors = ["Magnus Hovland Hoff <maghoff@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-wad = "0.2.0"
+wad = "0.3.2"
 structopt = "0.2.14"
 byteorder = "1.2.7"

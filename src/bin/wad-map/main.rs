@@ -43,8 +43,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     writeln!(
         out,
         r#"<svg viewBox="{} {} {} {}" xmlns="http://www.w3.org/2000/svg">"#,
-        bbox.left,
-        -bbox.bottom,
+        bbox.left(),
+        -bbox.bottom(),
         bbox.width(),
         bbox.height()
     )?;

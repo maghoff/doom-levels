@@ -3,10 +3,10 @@ use std::cmp::{max, min};
 use crate::Vertex;
 
 pub struct BoundingBox {
-    pub top: i16,
-    pub left: i16,
-    pub bottom: i16,
-    pub right: i16,
+    top: i16,
+    left: i16,
+    bottom: i16,
+    right: i16,
 }
 
 impl BoundingBox {
@@ -15,6 +15,22 @@ impl BoundingBox {
         self.left -= border;
         self.bottom += border;
         self.right += border;
+    }
+
+    pub fn top(&self) -> i16 {
+        self.top
+    }
+
+    pub fn left(&self) -> i16 {
+        self.left
+    }
+
+    pub fn bottom(&self) -> i16 {
+        self.bottom
+    }
+
+    pub fn right(&self) -> i16 {
+        self.right
     }
 
     pub fn width(&self) -> i16 {

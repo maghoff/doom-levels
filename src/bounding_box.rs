@@ -64,7 +64,7 @@ impl From<&Vertex> for BoundingBox {
 
 impl<'a, I> From<I> for BoundingBox
 where
-    I: IntoIterator<Item = &'a Vertex>
+    I: IntoIterator<Item = &'a Vertex>,
 {
     fn from(src: I) -> Self {
         let mut vertexes = src.into_iter();

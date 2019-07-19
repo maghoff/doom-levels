@@ -1,5 +1,5 @@
-use std::io::Read;
 use byteorder::{LittleEndian, ReadBytesExt};
+use std::io::Read;
 
 #[derive(Debug)]
 pub struct Vertex {

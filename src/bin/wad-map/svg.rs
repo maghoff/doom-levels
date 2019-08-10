@@ -1,8 +1,12 @@
 use std::io::Write;
 
-use wad_map::{Vertex, Linedef, BoundingBox};
+use wad_map::{BoundingBox, Linedef, Vertex};
 
-pub fn generate_svg(mut out: impl Write, vertexes: &[Vertex], linedefs: &[Linedef]) -> std::io::Result<()> {
+pub fn generate_svg(
+    mut out: impl Write,
+    vertexes: &[Vertex],
+    linedefs: &[Linedef],
+) -> std::io::Result<()> {
     let mut bbox = BoundingBox::from(vertexes);
     bbox.grow(20);
 
@@ -33,4 +37,3 @@ pub fn generate_svg(mut out: impl Write, vertexes: &[Vertex], linedefs: &[Linede
 
     Ok(())
 }
-

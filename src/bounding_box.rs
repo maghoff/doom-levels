@@ -11,7 +11,7 @@ pub struct BoundingBox {
 }
 
 impl BoundingBox {
-    pub fn new(top: i16, bottom: i16, left: i16, right: i16) -> BoundingBox {
+    pub fn new(bottom: i16, top: i16, left: i16, right: i16) -> BoundingBox {
         assert!(top <= bottom);
         assert!(left <= right);
         BoundingBox {

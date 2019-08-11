@@ -14,7 +14,7 @@ pub struct Node {
     pub left_child: Child,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Child {
     Subnode(u16),
     Subsector(u16),

@@ -2,6 +2,7 @@ use std::cmp::{max, min};
 
 use crate::Vertex;
 
+#[derive(Debug)]
 pub struct BoundingBox {
     top: i16,
     left: i16,
@@ -10,6 +11,17 @@ pub struct BoundingBox {
 }
 
 impl BoundingBox {
+    pub fn new(top: i16, bottom: i16, left: i16, right: i16) -> BoundingBox {
+        assert!(top <= bottom);
+        assert!(left <= right);
+        BoundingBox {
+            top,
+            left,
+            bottom,
+            right,
+        }
+    }
+
     pub fn grow(&mut self, border: i16) {
         self.top -= border;
         self.left -= border;

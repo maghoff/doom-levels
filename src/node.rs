@@ -14,6 +14,30 @@ pub struct Node {
     pub left_child: u16,
 }
 
+pub enum Child {
+    Subnode(u16),
+    Subsector(u16),
+}
+
+impl From<u16> for Child {
+    fn from(src: u16) -> Child {
+        match src & 0x8000 != 0 {
+            false => Child::Subnode(src),
+            true => Child::Subsector(src & 0x7fff),
+        }
+    }
+}
+
+impl Node {
+    pub fn right(&self) -> Child {
+        Child::from(self.right_child)
+    }
+
+    pub fn left(&self) -> Child {
+        Child::from(self.left_child)
+    }
+}
+
 pub fn read_node<R: Read>(r: &mut R) -> Result<Node, std::io::Error> {
     Ok(Node {
         x: r.read_i16::<LittleEndian>()?,
